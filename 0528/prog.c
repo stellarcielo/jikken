@@ -12,15 +12,20 @@
 
 int main(int argc, char *argv[]){
 	
-	if(argc != 2){
-		fprintf(stderr, "Usage: %s <num>\n", argv[0]);
-		fprintf(stderr, "num: light level 0~9\n");
+	if(argc != 3){
+		fprintf(stderr, "Usage: %s <Level> <Control value>\n", argv[0]);
+		fprintf(stderr, "Level: light level 0~9\nControl value: control value 0~9");
 		exit(1);
 	}
 	int level = atoi(argv[1]);
+	int ctrl = atoi(argv[2]);
 
 	if(0 > level && level < 9){
 		fprintf(stderr, "Level is 0~9.");
+		exit(1);
+	}
+	if(0 > ctrl && ctrl < 9){
+		fprintf(stderr, "Control value is 0~9.");
 		exit(1);
 	}
 
