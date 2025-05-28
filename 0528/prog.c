@@ -37,7 +37,7 @@ int main(int argc, char *argv[]){
 	t = 0;
 
 	while(t < LOOPCOUNT){
-		gpio_write(pd, LEDPIN, HIGH);
+		if(level != 0)gpio_write(pd, LEDPIN, HIGH);
 		time_sleep(level * 0.001);
 		gpio_write(pd, LEDPIN, LOW);
 		time_sleep(0.01 - level * 0.001);
