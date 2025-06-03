@@ -13,21 +13,16 @@
 int main(int argc, char *argv[]){
 	
 	if(argc != 2){
-		fprintf(stderr, "Usage: %s <Level> <Control value>\n", argv[0]);
+		fprintf(stderr, "Usage: %s <Level>\n", argv[0]);
 		fprintf(stderr, "Level: light level 0~9\nControl value: control value 0~9");
 		exit(1);
 	}
 	int level = atoi(argv[1]);
-	//int ctrl = atoi(argv[2]);
 
-	if(0 > level && level < 9){
+	if(0 > level || level < 9){
 		fprintf(stderr, "Level is 0~9.");
 		exit(1);
 	}
-	//if(0 > ctrl && ctrl < 9){
-	//	fprintf(stderr, "Control value is 0~9.");
-	//	exit(1);
-	//}
 
 	int pd, t;
 
@@ -42,9 +37,13 @@ int main(int argc, char *argv[]){
 	t = 0;
 
 	while(t < LOOPCOUNT){
-		if(level != 0)gpio_write(pd, LEDPIN, HIGH);
+		if(level != 0){
+			gpio_write(pd, LEDPIN, HIGH);
+		}
 		time_sleep(level * 0.001);
-		if(level != 9)gpio_write(pd, LEDPIN, LOW);
+		if(level != 9){
+			gpio_write(pd, LEDPIN, LOW);
+		}
 		time_sleep(0.01 - level * 0.001);
 		t++;
 	}
