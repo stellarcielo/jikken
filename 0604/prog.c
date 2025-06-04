@@ -36,9 +36,8 @@ int main(int argc, char *argv[]){
 	set_mode(pd, LEDPIN, PI_OUTPUT);
 
 	pthread_t thread;
-	int ret;
 
-	if((ret = pthread_create(&thread, NULL, pwm_write, NULL)) != 0){
+	if((pthread_create(&thread, NULL, pwm_write, NULL)) != 0){
 		fprintf(stderr, "Failed create pthread.");
 		exit(1);
 	}
