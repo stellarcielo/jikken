@@ -8,8 +8,6 @@
 
 #define LEDPIN 17
 
-#define LOOPCOUNT 1000
-
 int pd;
 int level;
 
