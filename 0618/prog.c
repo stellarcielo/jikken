@@ -6,8 +6,6 @@
 #define HIGH 1
 #define LOW 0
 
-#define LOOPCOUNT 10
-
 int main(){
 	int pd, num;
 
