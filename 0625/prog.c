@@ -27,6 +27,22 @@ int main(int argc, char *argv[]){
 		exit(EXIT_FAILURE);
 	}
 
+	struct sigaction handler;
+
+	handler.sa_handler = signalHandler;
+
+	if ((sigfillset(&handler.sa_mask)) < 0){
+		fprintf(stderr, "sigfillset() failed");
+		exit(1);
+	}
+
+	handler.sa_flags = 0;
+
+	if((sigaction(SIGINT, &handler, 0)) < 0){
+		fprintf(stderr, "sigaction() failed");
+		exit(1);
+	}
+
 	num = atoi(argv[1]);
 
 	num = num % 10;
