@@ -62,12 +62,13 @@ int main(int argc, char *argv[]){
 		{1, 1, 1, 0, 0, 1, 1}
 	};
 
+	for (int i = 0; i < 7; i++){
+		gpio_write(pd, pin[i], ledhl[num][i]);
+	}
 	while(1){
-		for (int i = 0; i < 7; i++){
-			gpio_write(pd, pin[i], ledhl[num][i]);
-		}
 	}
 }
+
 void signalHandler(int signalType){
 	for (int i = 0; i < 7; i++){
 		gpio_write(pd, pin[i], LOW);
