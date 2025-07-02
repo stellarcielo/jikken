@@ -20,6 +20,7 @@ int ledhl[10][7] = {
 	{1, 1, 1, 1, 1, 1, 1} ,
 	{1, 1, 1, 0, 0, 1, 1}
 };
+int stop_flag = 0;
 
 struct threadArgs{
 	int pd;
@@ -33,6 +34,8 @@ int main(){
 	int pd;
 	pthread_t thread;
 	struct threadArgs *args;
+
+	args = (struct threadArgs *)malloc(sizeof(struct threadArgs));
 
 	if ((pd = pigpio_start(NULL, NULL)) < 0){
 		printf("pigpio connection failed.\n");
@@ -62,11 +65,12 @@ int main(){
 	while(1){
 		scanf("%s", buf);
 		if(buf[0] == 'q'){
+			stop_flag = 1;
 			break;
 		}
 	}
 
-	if((pthread_detach(thread)) != 0){
+	if((pthread_join(thread, NULL)) != 0){
 		fprintf(stderr, "pthread detach failed.\n");
 		exit(1);
 	}
@@ -75,26 +79,27 @@ int main(){
 
 	pigpio_stop(pd);
 
+	free(args);
+
 	return 0;
 }
 
 void *countUp(void *args){
-	
-	struct threadArgs *th_args = (struct threadArgs *)args;
 
 	int num = 0;
 	int hl_old = 0, hl = 0;
 
-	while(1){
-		hl = gpio_read(th_args -> pd, th_args -> inPin);
-		if (hl != hl_old && hl == 0 && hl_old == 0){
+	while(!stop_flag){
+		hl = gpio_read(((struct threadArgs)args) -> pd, ((struct threadArgs)args) -> inPin);
+		if (hl == 0 && hl_old == 1){
 			num++;
 			hl_old = hl;
 		}
 
 		for(int i = 0; i < 7; i++){
-			gpio_write(th_args -> pd, th_args -> pin[i],ledhl[num][i]);
+			gpio_write(((struct threadArgs)args) -> pd, ((struct threadArgs)args) -> pin[i],ledhl[num][i]);
 		}
+		num %= 10;
 
 		time_sleep(0.1);
 	}
