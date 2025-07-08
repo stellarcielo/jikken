@@ -48,6 +48,7 @@ int main(){
 
 	for(int i = 0; i < 7; i++)set_mode(pd, pin[i], PI_OUTPUT);
 	set_mode(pd, inPin, PI_INPUT);
+	set_pull_up_down(pd, inPin, PI_PUD_UP);
 
 	args -> pd = pd;
 	args -> inPin = inPin;
@@ -85,21 +86,21 @@ int main(){
 }
 
 void *countUp(void *args){
+	struct threadArgs *th_args = (struct threadArgs *) args;
 
 	int num = 0;
-	int hl_old = 0, hl = 0;
+	int hl_old = 1, hl = 1;
 
 	while(!stop_flag){
-		hl = gpio_read(((struct threadArgs)args) -> pd, ((struct threadArgs)args) -> inPin);
+		hl = gpio_read(th_args -> pd, th_args -> inPin);
 		if (hl == 0 && hl_old == 1){
-			num++;
-			hl_old = hl;
-		}
+			num = (num + 1) %10;
 
-		for(int i = 0; i < 7; i++){
-			gpio_write(((struct threadArgs)args) -> pd, ((struct threadArgs)args) -> pin[i],ledhl[num][i]);
+			for(int i = 0; i < 7; i++){
+				gpio_write(th_args -> pd, th_args -> pin[i],ledhl[num][i]);
+			}
 		}
-		num %= 10;
+		hl_old = hl;
 
 		time_sleep(0.1);
 	}
