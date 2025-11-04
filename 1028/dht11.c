@@ -78,8 +78,10 @@ int main() {
 						printf("%d %d\n", hu + hl + tu + tl, cb);
 						fprintf(stderr, "Checkbyte error.\n");
 					} else {
-						humi = hu + hl / 10.0;
-						temp = tu + tl / 10.0;
+						humi = hu + hl * 0.1;
+						temp = tu + (tl & 0x7F) * 0.1;
+
+						if(tl & 0x80) temp = -temp;
 
 						printf("HUM: %3.1f%, TEMP:%2.1fC\n", humi, temp);
 					}
@@ -99,8 +101,8 @@ int bit_trans(tdata *td, int ofs) {
 	int b,i,t,d,p;
 	d = 0;
 	for (i = 0; i < 8; i++) {
-		p = 3 + ofs * 16 + i * 2;
-		t = td->timedata[p + 1] - td->timedata[p];
+		p = ofs * 8 + 3 + i;
+		t = td->timedata[p] - td->timedata[p - 1];
 		if (t < DETECTIONTH) b = LOW;
 		else b = HIGH;
 		d = (d << 1) | b;
