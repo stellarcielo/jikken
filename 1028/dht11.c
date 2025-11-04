@@ -25,7 +25,7 @@ typedef struct {
 } tdata;
 
 int bit_trans(tdata *td, int ofs);
-void edge_detectiuon(int pd, unsigned int gpio, unsigned int level, unsigned int tick, void* td);
+void edge_detection(int pd, unsigned int gpio, unsigned int level, unsigned int tick, void* td);
 
 int main() {
 	int pd, qflag, cid;
@@ -51,14 +51,14 @@ int main() {
 	qflag = 0;
 	while (qflag == 0) {
 		printf("Read Data from DHT11 / quit [y/q]:");
-		scanf("%c", &ans);
+		scanf(" %c", &ans);
 		if (ans != 'q') {
 			td.p = 0;
 			if ((cid = callback_ex(pd, DHT11PIN, FALLING_EDGE, edge_detection, &td)) < 0) {
 				fprintf(stderr, "failed callback_ex()\n");
 				qflag = 1;
 			} else {
-				set_mode(pd, DHT111PIN, PI_OUTPUT);
+				set_mode(pd, DHT11PIN, PI_OUTPUT);
 				time_sleep(0.020);
 				set_mode(pd, DHT11PIN, PI_INPUT);
 				time_sleep(0.010);
@@ -74,11 +74,12 @@ int main() {
 					tu = bit_trans(&td, TEMPUPPER);
 					tl = bit_trans(&td, TEMPLOWER);
 					cb = bit_trans(&td, CHECKBYTE);
-					if (hu + fl + tu + tl != cb) {
+					if (((hu + hl + tu + tl) & 0xFF) != cb) {
+						printf("%d %d\n", hu + hl + tu + tl, cb);
 						fprintf(stderr, "Checkbyte error.\n");
 					} else {
-						humi = hu + hl;
-						temp = tu + tl;
+						humi = hu + hl / 10.0;
+						temp = tu + tl / 10.0;
 
 						printf("HUM: %3.1f%, TEMP:%2.1fC\n", humi, temp);
 					}
@@ -98,11 +99,11 @@ int bit_trans(tdata *td, int ofs) {
 	int b,i,t,d,p;
 	d = 0;
 	for (i = 0; i < 8; i++) {
-		p = ;
-		t = ;
+		p = 3 + ofs * 16 + i * 2;
+		t = td->timedata[p + 1] - td->timedata[p];
 		if (t < DETECTIONTH) b = LOW;
 		else b = HIGH;
-		d = ;
+		d = (d << 1) | b;
 	}
 	return d;
 }
@@ -111,6 +112,8 @@ void edge_detection(int pd, unsigned int gpio, unsigned int level, unsigned int 
 	tdata *tdp;
 	tdp = (tdata *)td;
 
-	
+	if (tdp -> p < MAXEDGECOUNT) {
+		tdp -> timedata[tdp -> p++] = tick;
+	}
 }
 			
