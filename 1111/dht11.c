@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pigpiod_if2.h>
+#include <pthread.h>
 
 #define DHT11PIN 27
 
@@ -24,8 +25,30 @@ typedef struct {
 	int p;
 } tdata;
 
+typedef struct {
+	int pd;
+	int *dPin;
+	int *pin;
+	float hum;
+	float temp;
+} threadArgs;
+int stop_flag = 0;
+
 int bit_trans(tdata *td, int ofs);
 void edge_detection(int pd, unsigned int gpio, unsigned int level, unsigned int tick, void* td);
+void *displayDigit(void *args);
+
+int ledhl[10][7] =  {
+	{0,0,0,0,0,0,1},	//0
+	{1,0,0,1,1,1,1},	//1
+	{0,0,1,0,0,1,0},	//2
+	{0,0,0,0,1,1,0},	//3
+	{1,0,0,1,1,0,0},	//4
+	{0,1,0,0,1,0,0},	//5
+	{0,1,0,0,0,0,0},	//6
+	{0,0,0,1,1,0,1},	//7
+	{0,0,0,0,0,0,0},	//8
+	{0,0,0,0,1,0,0}};	//9
 
 int main() {
 	int pd, qflag, cid;
@@ -33,6 +56,8 @@ int main() {
 	float temp, humi;
 	tdata td;
 	char ans;
+	thread_t thread = 0;
+	threadArgs *args;
 
 	if ((pd = pigpio_start(NULL, NULL)) < 0) {
 		fprintf(stderr, "pigpiod connection failed.\n");
@@ -48,11 +73,20 @@ int main() {
 	printf("sensor init...\n");
 	time_sleep(2.0);
 
+	int pin[8] = {19,20,21,22,23,24,25,26}; //include DP.
+	int dPin[4] = {4,5,6,12};
+
+	args->pd = pd;
+	args->dPin = dPin;
+	args->pin = pin;
+
 	qflag = 0;
 	while (qflag == 0) {
 		printf("Read Data from DHT11 / quit [y/q]:");
 		scanf(" %c", &ans);
 		if (ans != 'q') {
+			stop_flag = 1;
+			pthread_join(thread, NULL);
 			td.p = 0;
 			if ((cid = callback_ex(pd, DHT11PIN, FALLING_EDGE, edge_detection, &td)) < 0) {
 				fprintf(stderr, "failed callback_ex()\n");
@@ -84,6 +118,15 @@ int main() {
 						if(tl & 0x80) temp = -temp;
 
 						printf("HUM: %3.1f%, TEMP:%2.1fC\n", humi, temp);
+						args->hum = humi;
+						args->temp = temp;
+
+						stop_flag = 0;
+
+						if ((pthread_create(&thread, NULL, displayDigit, (void *)args)) != 0) {
+							fprintf(stderr, "thread create failed.\n");
+							exit(1);
+						}
 					}
 				}
 				printf("wait 2 second...\n");
@@ -91,8 +134,11 @@ int main() {
 			}
 		} else {
 			qflag = 1;
+			stop_flag = 1;
 		}
 	}
+
+	pthread_join(thread, NULL);
 	pigpio_stop(pd);
 	return 0;
 }
@@ -118,4 +164,18 @@ void edge_detection(int pd, unsigned int gpio, unsigned int level, unsigned int 
 		tdp -> timedata[tdp -> p++] = tick;
 	}
 }
-			
+
+void *displayDigit(void *args) {
+	threadArgs *th_args = (threadArgs *) args;
+
+	int hum[3];
+	int temp[3];
+
+	humi[0] = (int)(th_args->hum / 10) % 10;
+	humi[1] = (int)(th_args->hum % 10;
+	humi[2] = (int)(th_args->
+
+	while (!stop_flag) {
+		for(int i = 0; i < 4; i++){
+			for (int j = 0; j < 7; j++) {
+				gpio_write(th_args->pd, th_args->pin[i],ledhl[][])
