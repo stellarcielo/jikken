@@ -56,14 +56,15 @@ int main() {
 	float temp, humi;
 	tdata td;
 	char ans;
-	thread_t thread = 0;
-	threadArgs *args;
+	pthread_t thread = 0;
 
 	if ((pd = pigpio_start(NULL, NULL)) < 0) {
 		fprintf(stderr, "pigpiod connection failed.\n");
 		fprintf(stderr, "check start pigpiod.\n");
 		exit(1);
 	}
+
+	threadArgs *args = malloc(sizeof(threadArgs));
 
 	set_pull_up_down(pd, DHT11PIN, PI_PUD_OFF);
 	gpio_write(pd, DHT11PIN, LOW);
@@ -80,13 +81,17 @@ int main() {
 	args->dPin = dPin;
 	args->pin = pin;
 
+	for (int i = 0; i < 8; i++) set_mode(pd, pin[i], PI_OUTPUT);
+	for (int i = 0; i < 4; i++) set_mode(pd, dPin[i], PI_OUTPUT);
+
 	qflag = 0;
 	while (qflag == 0) {
 		printf("Read Data from DHT11 / quit [y/q]:");
 		scanf(" %c", &ans);
 		if (ans != 'q') {
 			stop_flag = 1;
-			pthread_join(thread, NULL);
+			if (thread) pthread_join(thread, NULL);
+
 			td.p = 0;
 			if ((cid = callback_ex(pd, DHT11PIN, FALLING_EDGE, edge_detection, &td)) < 0) {
 				fprintf(stderr, "failed callback_ex()\n");
@@ -123,10 +128,7 @@ int main() {
 
 						stop_flag = 0;
 
-						if ((pthread_create(&thread, NULL, displayDigit, (void *)args)) != 0) {
-							fprintf(stderr, "thread create failed.\n");
-							exit(1);
-						}
+						pthread_create(&thread, NULL, displayDigit, (void *)args);
 					}
 				}
 				printf("wait 2 second...\n");
@@ -138,7 +140,7 @@ int main() {
 		}
 	}
 
-	pthread_join(thread, NULL);
+	if (thread) pthread_join(thread, NULL);
 	pigpio_stop(pd);
 	return 0;
 }
@@ -166,16 +168,63 @@ void edge_detection(int pd, unsigned int gpio, unsigned int level, unsigned int 
 }
 
 void *displayDigit(void *args) {
-	threadArgs *th_args = (threadArgs *) args;
+	threadArgs *a = (threadArgs *) args;
 
-	int hum[3];
-	int temp[3];
+	int pd = a->pd;
+	int *pin = a->pin;
+	int *dPin = a->pin;
 
-	humi[0] = (int)(th_args->hum / 10) % 10;
-	humi[1] = (int)(th_args->hum % 10;
-	humi[2] = (int)(th_args->
+	int hum1 = ((int)a->hum) / 10;
+	int hum2 = ((int)a->hum) % 10;
+
+	int temp1 = ((int)a->temp) / 10;
+	int temp2 = ((int)a->temp) % 10;
 
 	while (!stop_flag) {
-		for(int i = 0; i < 4; i++){
-			for (int j = 0; j < 7; j++) {
-				gpio_write(th_args->pd, th_args->pin[i],ledhl[][])
+		for (int k = 0;k < 300; k++) {
+			int digits[4] = {hum1, hum2, -1, -1};
+
+			for (int i = 0; i < 4; i++) {
+				for (int d = 0; d < 4; d++) {
+					gpio_write(pd, pin[d], (d == i) ? 1 : 0);
+
+					if (digits[i] >= 0) {
+						for (int s = 0; s < 7; s++) {
+							gpio_write(pd, pin[s], ledhl[digits[i]][s]);
+						}
+					} else {
+						for (int s = 0; s < 7; s++) {
+							gpio_write(pd, pin[s], 1);
+						}
+					}
+					time_sleep(0.002);
+				}
+			}
+		}
+
+		for (int k = 0; k < 300; k++) {
+			int digits[4] = {-1, -1, temp1, temp2};
+
+			for (int i = 0; i < 4; i++) {
+				for (int d = 0; d < 4; d++) {
+					gpio_write(pd, dPin[d], (d == i) ? 1 : 0);
+
+					if (digits[i] >= 0) {
+						for (int s = 0; s < 7; s++) {
+							gpio_write(pd, pin[s], ledhl[digits[i]][s]);
+						}
+					} else {
+						for (int s = 0; s < 7; s++) {
+							gpio_write(pd, pin[s], 1);
+						}
+					}
+					time_sleep(0.002);
+				}
+			}
+		}
+	}
+
+	return NULL;
+}
+
+			
