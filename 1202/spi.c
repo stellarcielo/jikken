@@ -64,7 +64,7 @@ int ad_read(int pd, int fd, int ch) {
 	unsigned char wdata[3], rdata[3]; // SPI でやりとりするためのバッファ
 	int val;
 	wdata[0] = 0b00000001; // スタートビットになる
-	wdata[1] = 0b10000000; // シングルエンド、チャンネルセット
+	wdata[1] = 0b10000000 + (ch & 0x0007) << 4;// シングルエンド、チャンネルセット
 	spi_xfer(pd, fd, wdata, rdata, 3); // SPI データの送受信
 	val = (rdata[1] & 0x03) << 8; // 上位2 ビット分を取り込んでシフト
 	val = val + (int)rdata[2];// 下位8 ビット分を取り込んで加算
