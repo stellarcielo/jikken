@@ -14,33 +14,39 @@
 // プロトタイプ宣言
 int ad_read(int pd, int fd, int ch);
 
-int main(){
+int main(int argc, char argv[]){
+
+	if (artgc != 2){
+		fprintf(stderr, "Usage: %s <NUM>/n", argv[0]);
+		exit(1);
+	}
+
 	int fd,ch,i;
 	int pd;
 	// 最初にデーモンに接続する（NULL:localhost, NULL:default port）
 	pd = pigpio_start(NULL,NULL);
 	if (pd < 0){
-		printf("pigpiod の接続に失敗しました。\n");
-		printf("pigpiod が起動しているか確認してください。\n");
+		fprintf(stderr, "pigpiod の接続に失敗しました。\n");
+		fprintf(stderr, "pigpiod が起動しているか確認してください。\n");
 		exit(EXIT_FAILURE);
 	}
 	// SPI の初期化
 	// 最後の引数はフラグ、デフォルト動作は０でよい
 	fd = spi_open(pd, SPICH, SPISPEED, 0);
 	if (fd < 0){
-		printf("SPI 初期化エラー！\n");
+		fprintf(stderr, "SPI 初期化エラー！\n");
 		exit(EXIT_FAILURE);
 	}
-	ch = 0;
-	while (ch >= 0) {
-		printf("mcp3008 からA/D 変換値を読み込みます。\n");
-		printf(" チャンネル（0-7, それ以上は全て, 負数は終了）を入力：");
-		scanf("\n%d",&ch);
+	ch = atoi(argv[1]);
+	if (ch >= 0) {
+		//printf("mcp3008 からA/D 変換値を読み込みます。\n");
+		//printf(" チャンネル（0-7, それ以上は全て, 負数は終了）を入力：");
+		//scanf("\n%d",&ch);
 		if (ch > 7){
 			for (i=0; i<8; i++){
-				printf(" ch%d = %d\n",i,ad_read(pd, fd, i));
+				printf("%d", ad_read(pd, fd, i));
 			}
-		} else if (ch >= 0)	printf(" ch%d = %d\n",ch,ad_read(pd, fd, ch));
+		} else if (ch >= 0)	printf("%d", ad_read(pd, fd, ch));
 	}
 	// 終了時には使用した SPI をクローズする
 	spi_close(pd, fd);
