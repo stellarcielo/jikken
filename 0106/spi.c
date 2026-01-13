@@ -38,7 +38,7 @@ int main(int argc, char argv[]){
 		exit(EXIT_FAILURE);
 	}
 	ch = atoi(argv[1]);
-	if (ch >= 0) {
+	if (ch >= 0) {                                                                                                                       
 		//printf("mcp3008 からA/D 変換値を読み込みます。\n");
 		//printf(" チャンネル（0-7, それ以上は全て, 負数は終了）を入力：");
 		//scanf("\n%d",&ch);
