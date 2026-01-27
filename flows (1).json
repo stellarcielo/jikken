@@ -1,0 +1,205 @@
+[
+    {
+        "id": "7b762834373b6cc2",
+        "type": "mqtt in",
+        "z": "afbc90da10e6155d",
+        "name": "",
+        "topic": "j3jikken/AD/29",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "3234c202fd18a583",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 370,
+        "y": 480,
+        "wires": [
+            [
+                "c43beb39606d3a2a"
+            ]
+        ]
+    },
+    {
+        "id": "cc967dc43db0dde0",
+        "type": "mqtt out",
+        "z": "afbc90da10e6155d",
+        "name": "",
+        "topic": "j3jikken/AD/03",
+        "qos": "2",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "3234c202fd18a583",
+        "x": 800,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "7b7cf4664c6dbd0f",
+        "type": "inject",
+        "z": "afbc90da10e6155d",
+        "name": "",
+        "props": [],
+        "repeat": "0.5",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 310,
+        "y": 360,
+        "wires": [
+            [
+                "0f91822359ea0db7"
+            ]
+        ]
+    },
+    {
+        "id": "0f91822359ea0db7",
+        "type": "exec",
+        "z": "afbc90da10e6155d",
+        "command": "/home/piuser03/jikken/0106/spi 0",
+        "addpay": "",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "",
+        "x": 540,
+        "y": 360,
+        "wires": [
+            [
+                "cc967dc43db0dde0"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "c43beb39606d3a2a",
+        "type": "ui_chart",
+        "z": "afbc90da10e6155d",
+        "name": "",
+        "group": "9fd6ec15be4480c7",
+        "order": 0,
+        "width": "6",
+        "height": "4",
+        "label": "chart",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "1024",
+        "removeOlder": "100",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "1",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 550,
+        "y": 480,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "377a83c7f6c17960",
+        "type": "mqtt in",
+        "z": "afbc90da10e6155d",
+        "name": "",
+        "topic": "j3jikken/AD/03",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "3234c202fd18a583",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 370,
+        "y": 540,
+        "wires": [
+            [
+                "c43beb39606d3a2a"
+            ]
+        ]
+    },
+    {
+        "id": "3234c202fd18a583",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "10.7.10.200",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "9fd6ec15be4480c7",
+        "type": "ui_group",
+        "name": "Default",
+        "tab": "9c4d76eaebfe2003",
+        "order": 1,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "9c4d76eaebfe2003",
+        "type": "ui_tab",
+        "name": "Home",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "df48e649bc31af30",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-dashboard": "3.6.6"
+        }
+    }
+]

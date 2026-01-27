@@ -1,0 +1,152 @@
+[
+    {
+        "id": "0156bbdd7b8ad8d6",
+        "type": "exec",
+        "z": "afbc90da10e6155d",
+        "command": "/home/piuser03/jikken/0106/spi 0",
+        "addpay": "",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "",
+        "x": 440,
+        "y": 260,
+        "wires": [
+            [
+                "16de91798d57007a"
+            ],
+            [
+                "0cceba6c483e2f40"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "16de91798d57007a",
+        "type": "ui_chart",
+        "z": "afbc90da10e6155d",
+        "name": "",
+        "group": "9fd6ec15be4480c7",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "label": "chart",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "1024",
+        "removeOlder": "100",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "1",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 790,
+        "y": 260,
+        "wires": [
+            [
+                "7a0357635b2dd6f1"
+            ]
+        ]
+    },
+    {
+        "id": "45335fdad7c9f742",
+        "type": "inject",
+        "z": "afbc90da10e6155d",
+        "name": "",
+        "props": [],
+        "repeat": "0.5",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 150,
+        "y": 260,
+        "wires": [
+            [
+                "0156bbdd7b8ad8d6"
+            ]
+        ]
+    },
+    {
+        "id": "0cceba6c483e2f40",
+        "type": "debug",
+        "z": "afbc90da10e6155d",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 780,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "7a0357635b2dd6f1",
+        "type": "debug",
+        "z": "afbc90da10e6155d",
+        "name": "debug 2",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 940,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "9fd6ec15be4480c7",
+        "type": "ui_group",
+        "name": "Default",
+        "tab": "9c4d76eaebfe2003",
+        "order": 1,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "9c4d76eaebfe2003",
+        "type": "ui_tab",
+        "name": "Home",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "0eaf7fc3242dd7c4",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-dashboard": "3.6.6"
+        }
+    }
+]
